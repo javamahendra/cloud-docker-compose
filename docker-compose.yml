@@ -1,0 +1,59 @@
+version: '3.8'
+services:
+  ## Zipkin
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - 9411:9411
+      
+  adminserver:
+    image: javamahendra/adminserver:1.1
+    #container_name: cloudadminserver-tag
+    ports:
+      - 1111:1111
+    #depends_on:
+    #  - orderservice
+    #  - paymentservice
+    #build: eurekaserver/
+  serviceregistery:
+    image: javamahendra/serviceregistery:1.1
+    #container_name: cloudserviceregistery-tag
+    ports:
+      - 8761:8761
+    #depends_on:
+    #  - cloudgateway
+    #  - orderservice
+    #  - paymentservice
+    #build: eurekaserver/
+  servicegateway:
+    image: javamahendra/servicegateway:1.1
+    #container_name: cloudgateway-tag
+    ports:
+      - 8762:8762
+    #environment:
+      #SPRING_APPLICATION_JSON: '{"serviceregistery":{"client":{"serviceUrl":{"defaultZone":"http://serviceregistery:8761/eureka"}}}}'
+    depends_on:
+      - serviceregistery
+  orderservice:
+    #build: journal_server/
+    image: javamahendra/orderservice:1.1
+    depends_on:
+      - serviceregistery
+      - servicegateway
+      - paymentservice
+    #environment:
+      #SPRING_APPLICATION_JSON: '{"serviceregistery":{"client":{"serviceUrl":{"defaultZone":"http://serviceregistery:8761/eureka"}}}}'
+    ports:
+      - 9091:9091
+  paymentservice:
+    #build: journal_server/
+    image: javamahendra/paymentservice:1.1
+    #container_name: paymentservice-tag
+    depends_on:
+      - serviceregistery
+      - servicegateway
+    #environment:
+      #SPRING_APPLICATION_JSON: '{"serviceregistery":{"client":{"serviceUrl":{"defaultZone":"http://serviceregistery:8761/eureka"}}}}'
+    ports:
+      - 9092:9092

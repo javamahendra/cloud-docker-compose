@@ -1,0 +1,31 @@
+server:
+  port: 8762
+       
+spring:
+  application:
+    name: cloudgateway
+  boot:
+    admin:
+      client:
+        url: http://adminserver:1111/        
+ 
+management:
+  endpoint:
+    gateway:
+      enabled: true # default value
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    serviceUrl:
+      defaultZone: http://serviceregistery:8761/eureka
+      #defaultZone: http://localhost:8761/eureka/
+     
+#management.zipkin.tracing.endpoint=http://zipkin:9411
